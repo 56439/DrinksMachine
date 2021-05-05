@@ -19,7 +19,7 @@ import java.util.List;
 @Component
 public class CurrentDrinkHandler {
 
-    final MenuService menuService;
+    private final MenuService menuService;
     public CurrentDrinkHandler(MenuService menuService) {
         this.menuService = menuService;
     }
@@ -71,7 +71,9 @@ public class CurrentDrinkHandler {
                 .setSwitchInlineQueryCurrentChat("Меню"));
 
         List<InlineKeyboardButton> row3 = new ArrayList<>();
-        row3.add(new InlineKeyboardButton().setText("\uD83D\uDCB3 Оплатить (" + selectedDrink.getCost() + " ₽)").setCallbackData("pay" + selectedDrink.getId()));
+        row3.add(new InlineKeyboardButton()
+                .setText("\uD83D\uDCB3 Перейти к оплате (" + selectedDrink.getCost() + " ₽)")
+                .setCallbackData("pay" + selectedDrink.getId()));
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(row1);

@@ -5,11 +5,16 @@ import com.diplom.drinksmachine.domain.Order;
 import com.diplom.drinksmachine.domain.User;
 import com.diplom.drinksmachine.service.MenuService;
 import com.diplom.drinksmachine.service.OrderService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
+import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery;
+import org.telegram.telegrambots.meta.api.methods.send.SendInvoice;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.payments.LabeledPrice;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -17,7 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@PropertySource("classpath:telegram.properties")
 public class OrderHandler {
+
+    @Value("${bot.providerToken}")
+    private String providerToken;
+
     final OrderService orderService;
     final MenuService menuService;
     public OrderHandler(OrderService orderService, MenuService menuService) {
@@ -25,58 +35,50 @@ public class OrderHandler {
         this.menuService = menuService;
     }
 
-    public EditMessageReplyMarkup handler(Update update, User user) {
+    public SendInvoice paymentMessage(Update update, User user) {
         String callbackText = update.getCallbackQuery().getData();
-        String drinkId = callbackText.substring(3);
-        Menu menu = menuService.findById(Long.parseLong(drinkId));
+        String menuId = callbackText.substring(3);
+        Menu menu = menuService.findById(Long.parseLong(menuId));
 
+        String label = menu.getDrink().getTitle() + " - "
+                + menu.getCapacity().getSymbol() + ": "
+                + menu.getCapacity().getValue() + " мл.";
+
+        LabeledPrice price = new LabeledPrice();
+        price.setLabel(label);
+        price.setAmount(Integer.valueOf(menu.getCost() + "00"));
+        List<LabeledPrice> prices = new ArrayList<>();
+        prices.add(price);
+
+        return new SendInvoice()
+                .setChatId(Math.toIntExact(user.getChatId()))
+                .setProviderToken(providerToken)
+                .setCurrency("RUB")
+                .setTitle(menu.getDrink().getTitle())
+                .setDescription(menu.getCapacity().getSymbol() + ": "
+                        + menu.getCapacity().getValue() + " мл.")
+                .setPrices(prices)
+                .setPhotoUrl(menu.getDrink().getImg())
+                .setPhotoHeight(400)
+                .setPhotoWidth(400)
+                .setPayload(menuId)
+                .setStartParameter("startParameter");
+    }
+
+    public AnswerPreCheckoutQuery checkoutPayment(Update update) {
+        return new AnswerPreCheckoutQuery()
+                .setPreCheckoutQueryId(update.getPreCheckoutQuery().getId())
+                .setOk(true)
+                .setErrorMessage("Платеж не прошел \uD83E\uDD28");
+    }
+
+    public void addOrder(String payload, User user) {
+        Menu menu = menuService.findById(Long.parseLong(payload));
         Order order = new Order();
         order.setCafe(user.getCafe());
         order.setMenu(menu);
         order.setUser(user);
         orderService.addOrder(order);
-
-        List<Order> orders = orderService.findByUserId(user.getId());
-        Long orderId = orders.get(orders.size()-1).getId();
-
-        return new EditMessageReplyMarkup()
-                .setChatId(user.getChatId())
-                .setMessageId(update.getCallbackQuery().getMessage().getMessageId())
-                .setReplyMarkup(checkOrderKeyboard(orderId));
-    }
-
-    public AnswerCallbackQuery checkOrder(Update update) {
-        String callbackText = update.getCallbackQuery().getData();
-        long orderId = Long.parseLong(callbackText.substring(10));
-
-        Order order = orderService.findById(orderId);
-        String answerText;
-
-        if (order == null) {
-            answerText = "Заказ не найден";
-        } else {
-            if (order.getReady())
-                answerText = "Ваш заказ уже готов и ждет вас!\n\nЗаказ №" + orderId;
-            else
-                answerText = "Ваш заказ пока не готов :(\n\nЗаказ №" + orderId;
-        }
-
-        return new AnswerCallbackQuery()
-                .setShowAlert(true)
-                .setCallbackQueryId(update.getCallbackQuery().getId())
-                .setText(answerText);
-    }
-
-    private InlineKeyboardMarkup checkOrderKeyboard(Long orderId) {
-        List<InlineKeyboardButton> row = new ArrayList<>();
-        row.add(new InlineKeyboardButton()
-                .setText("❓ Состояние заказа")
-                .setCallbackData("checkorder" + orderId));
-
-        List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
-        rowList.add(row);
-
-        return new InlineKeyboardMarkup().setKeyboard(rowList);
     }
 
     public EditMessageText orderInfo(Update update, User user) {

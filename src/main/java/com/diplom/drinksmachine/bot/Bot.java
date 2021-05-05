@@ -8,16 +8,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
-import org.telegram.telegrambots.meta.api.methods.send.SendLocation;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.AnswerPreCheckoutQuery;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageCaption;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.io.Serializable;
 
 @Component
 @PropertySource("classpath:telegram.properties")
@@ -44,21 +42,20 @@ public class Bot extends TelegramLongPollingBot {
     private final InputMessageHandler inputMessageHandler;
     private final InlineQueryHandler inlineQueryHandler;
     private final CurrentDrinkHandler currentDrinkHandler;
-    private final CapacityCurrentDrinkHandler capacityCurrentDrinkHandler;
     private final OrderHandler orderHandler;
+    private final CallbackQueryHandler callbackQueryHandler;
 
     public Bot(UserService userService,
                InputMessageHandler inputMessageHandler,
                InlineQueryHandler inlineQueryHandler,
                CurrentDrinkHandler currentDrinkHandler,
-               CapacityCurrentDrinkHandler capacityCurrentDrinkHandler,
-               OrderHandler orderHandler) {
+               OrderHandler orderHandler, CallbackQueryHandler callbackQueryHandler) {
         this.userService = userService;
         this.inputMessageHandler = inputMessageHandler;
         this.inlineQueryHandler = inlineQueryHandler;
         this.currentDrinkHandler = currentDrinkHandler;
-        this.capacityCurrentDrinkHandler = capacityCurrentDrinkHandler;
         this.orderHandler = orderHandler;
+        this.callbackQueryHandler = callbackQueryHandler;
     }
 
     @Override
@@ -66,55 +63,49 @@ public class Bot extends TelegramLongPollingBot {
 
         User user = getUser(update);
 
+        if (update.hasPreCheckoutQuery()) {
+            sendAnswerPreCheckoutQuery(orderHandler.checkoutPayment(update));
+            return;
+        }
+
         if (update.hasCallbackQuery()) {
-            String callbackQuery = update.getCallbackQuery().getData();
-
-            if (callbackQuery.startsWith("selectdrink")) {
-                sendEditMessageCaption(capacityCurrentDrinkHandler.handler(update, user));
-                return;
+            if (update.getCallbackQuery().getData().startsWith("pay")) {
+                sendAnswer(callbackQueryHandler.deleteMessage(update, user));
             }
-
-            if (callbackQuery.startsWith("pay")) {
-                sendEditMessageReplyMarkup(orderHandler.handler(update, user));
-
-                log.info("Новый заказ от пользователя: {}, chatID: {}",
-                        update.getCallbackQuery().getFrom().getUserName(),
-                        update.getCallbackQuery().getMessage().getChatId());
-                return;
-            }
-
-            if (callbackQuery.startsWith("checkorder")) {
-                sendAnswerCallbackQuery(orderHandler.checkOrder(update));
-                return;
-            }
-
-            if (callbackQuery.startsWith("orderinfo")) {
-                sendEditMessageText(orderHandler.orderInfo(update, user));
-                return;
-            }
-
-            if (callbackQuery.equals("backtoorderlist")) {
-                sendEditMessageText(orderHandler.orderList(update, user));
-                return;
-            }
+            sendAnswer(callbackQueryHandler.handler(update, user));
+            return;
         }
 
         if (update.hasInlineQuery()) {
             sendInlineQuery(inlineQueryHandler.handler(update));
+            return;
         }
 
         if (update.hasChosenInlineQuery()) {
             sendPhoto(currentDrinkHandler.chosenDrinkMessage(update, user));
+            return;
         }
 
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            sendLocation(inputMessageHandler.replyLocation(update, user));
-            sendMessage(inputMessageHandler.messageHandler(update, user));
+        if (update.hasMessage()) {
+            if (update.getMessage().hasSuccessfulPayment()) {
+                String menuId = update.getMessage().getSuccessfulPayment().getInvoicePayload();
+                orderHandler.addOrder(menuId, user);
 
-            log.info("Новое сообщение от пользователя {}, chatId: {}, сообщение: {}",
-                    update.getMessage().getFrom().getUserName(),
-                    update.getMessage().getChatId(),
-                    update.getMessage().getText());
+                log.info("Новый заказ от пользователя: {}, chatID: {}, menuId: {}",
+                        update.getMessage().getFrom().getUserName(),
+                        update.getMessage().getChatId(),
+                        update.getMessage().getSuccessfulPayment().getInvoicePayload());
+                return;
+            }
+
+            if (update.getMessage().hasText()) {
+                sendAnswer(inputMessageHandler.messageHandler(update, user));
+
+                log.info("Новое сообщение от пользователя {}, chatId: {}, сообщение: {}",
+                        update.getMessage().getFrom().getUserName(),
+                        update.getMessage().getChatId(),
+                        update.getMessage().getText());
+            }
         }
     }
 
@@ -129,6 +120,8 @@ public class Bot extends TelegramLongPollingBot {
             userName = update.getMessage().getFrom().getUserName();
         if (update.hasCallbackQuery())
             userName = update.getCallbackQuery().getFrom().getUserName();
+        if (update.hasPreCheckoutQuery())
+            userName = update.getPreCheckoutQuery().getFrom().getUserName();
 
         User user = userService.findByUserName(userName);
         if (user == null) {
@@ -141,22 +134,6 @@ public class Bot extends TelegramLongPollingBot {
         return user;
     }
 
-    private void sendMessage(SendMessage sendMessage) {
-        if (sendMessage == null) return;
-        try {
-            execute(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-    private void sendLocation(SendLocation location) {
-        if (location == null) return;
-        try {
-            execute(location);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
     private void sendInlineQuery(AnswerInlineQuery answerInlineQuery) {
         if (answerInlineQuery == null) return;
         try {
@@ -173,34 +150,18 @@ public class Bot extends TelegramLongPollingBot {
             e.printStackTrace();
         }
     }
-    private void sendEditMessageCaption(EditMessageCaption editMessageCaption) {
-        if (editMessageCaption == null) return;
+    private void sendAnswerPreCheckoutQuery(AnswerPreCheckoutQuery answerPreCheckoutQuery) {
         try {
-            execute(editMessageCaption);
+            execute(answerPreCheckoutQuery);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
-    private void sendEditMessageReplyMarkup(EditMessageReplyMarkup editMessageReplyMarkup) {
-        if (editMessageReplyMarkup == null) return;
+
+    private void sendAnswer(BotApiMethod<? extends Serializable> answer) {
+        if (answer == null) return;
         try {
-            execute(editMessageReplyMarkup);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-    private void sendAnswerCallbackQuery(AnswerCallbackQuery answerCallbackQuery) {
-        if (answerCallbackQuery == null) return;
-        try {
-            execute(answerCallbackQuery);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-    private void sendEditMessageText(EditMessageText editMessageText) {
-        if (editMessageText == null) return;
-        try {
-            execute(editMessageText);
+            execute(answer);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }

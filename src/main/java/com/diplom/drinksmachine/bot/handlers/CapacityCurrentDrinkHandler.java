@@ -38,7 +38,7 @@ public class CapacityCurrentDrinkHandler {
             if (button.getCallbackData().substring(11).equals(callback)) {
                 button.setText("› " + chosenDrink.getCapacity().getSymbol());
                 payButton.setCallbackData("pay" + callback);
-                payButton.setText("\uD83D\uDCB3 Оплатить (" + chosenDrink.getCost() + " ₽)");
+                payButton.setText("\uD83D\uDCB3 Перейти к оплате (" + chosenDrink.getCost() + " ₽)");
 
                 caption =
                         "<b>" + user.getCafe().getAddress() + "</b>\n\n" +
