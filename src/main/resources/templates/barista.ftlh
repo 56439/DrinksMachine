@@ -20,6 +20,9 @@
                             <div class="col-sm-3">
                                 ${order.menu.capacity.symbol} - ${order.menu.capacity.value} мл.
                             </div>
+                            <div class="col-sm-3">
+                                ${order.user.name}
+                            </div>
                             <div class="col-auto">
                                 <button type="submit" class="btn btn-primary" name="${order.id}">Готово</button>
                             </div>

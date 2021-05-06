@@ -1,5 +1,6 @@
 package com.diplom.drinksmachine.web.controllers;
 
+import com.diplom.drinksmachine.service.OrderReadyMessage;
 import com.diplom.drinksmachine.domain.Order;
 import com.diplom.drinksmachine.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +21,10 @@ import java.util.Map;
 @Slf4j
 public class BaristaController {
     private final OrderService orderService;
-    public BaristaController(OrderService orderService) {
+    private final OrderReadyMessage orderReadyMessage;
+    public BaristaController(OrderService orderService, OrderReadyMessage orderReadyMessage) {
         this.orderService = orderService;
+        this.orderReadyMessage = orderReadyMessage;
     }
 
     @GetMapping
@@ -37,13 +40,13 @@ public class BaristaController {
             Map<String, Object> model,
             @RequestParam Map<String, String> form
     ) {
-
         List<String> idList = orderService.findAllId();
         for (String key : form.keySet()) {
             if (idList.contains(key)) {
                 Order order = orderService.findById(Long.parseLong(key));
                 order.setReady(true);
                 orderService.updateOrder(order);
+                orderReadyMessage.pingMe(order);
             }
         }
 
@@ -52,4 +55,6 @@ public class BaristaController {
 
         return "barista";
     }
+
+
 }
