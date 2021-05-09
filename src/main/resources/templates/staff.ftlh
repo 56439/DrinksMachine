@@ -34,9 +34,6 @@
             <#list staff as s>
                     <li class="list-group-item">
                         <div class="form-row">
-                            <div class="col-auto">
-                                <b>${s.id}</b>
-                            </div>
                             <div class="col-sm-2">
                                 ${s.username}
                             </div>

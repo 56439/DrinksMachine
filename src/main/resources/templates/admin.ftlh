@@ -37,8 +37,7 @@
            <div class="card my-3">
                <img src="${drink.img}" class="card-img-top" height="354.66">
                <div class="m-2">
-                   <b>${drink.id}</b>
-                   <span>${drink.title}</span>
+                   <span><b>${drink.title}</b></span>
                </div>
                <div class="card-footer text-muted">${drink.description}
                    <a class="btn btn-primary" href="/admin/drink/${drink.id}">Изменить</a>

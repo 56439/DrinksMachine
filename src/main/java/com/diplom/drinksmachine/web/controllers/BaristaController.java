@@ -3,7 +3,6 @@ package com.diplom.drinksmachine.web.controllers;
 import com.diplom.drinksmachine.service.OrderReadyMessage;
 import com.diplom.drinksmachine.domain.Order;
 import com.diplom.drinksmachine.service.OrderService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +17,6 @@ import java.util.Map;
 @Controller
 @RequestMapping("/barista")
 @PreAuthorize("hasAuthority('BARISTA')")
-@Slf4j
 public class BaristaController {
     private final OrderService orderService;
     private final OrderReadyMessage orderReadyMessage;
@@ -31,7 +29,6 @@ public class BaristaController {
     public String barista(Model model) {
         List<Order> orders = orderService.findOrdersByReady(false);
         model.addAttribute("orders", orders);
-
         return "barista";
     }
 

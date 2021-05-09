@@ -4,7 +4,6 @@
     <h5>Редактирование напитка</h5>
     <div class="form-group w-50">
         <form method="post">
-            <label>ID: <b>${drink.id}</b></label>
             <input type="text" class="form-control mb-1 mt-2" name="title" value="${drink.title}">
             <input type="text" class="form-control mb-1" name="description" value="${drink.description}">
             <input type="text" class="form-control mb-1" name="img" value="${drink.img}">

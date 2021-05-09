@@ -8,22 +8,24 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <#if user??>
+        <#if user??>
+            <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin">Admin</a>
+                    <a class="nav-link" href="/admin">Администратор</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/staff">Staff</a>
+                    <a class="nav-link" href="/staff">Персонал</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cafe">Кофейни</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="/barista">Barista</a>
+                    <a class="nav-link" href="/barista">Бариста</a>
                 </li>
-            </#if>
-        </ul>
-
-        <div class="navbar-text mr-3">${name}</div>
-        <@l.logout />
+            </ul>
+            <div class="navbar-text mr-3">${name}</div>
+            <@l.logout />
+        </#if>
     </div>
 </nav>

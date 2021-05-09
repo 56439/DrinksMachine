@@ -30,4 +30,14 @@ public class CafeService {
     public Cafe findById(long id) {
         return cafeRepo.findById(id);
     }
+
+    @Transactional
+    public void save(Cafe cafe) {
+        cafeRepo.save(cafe);
+    }
+
+    @Transactional
+    public void  delete(Cafe cafe) {
+        cafeRepo.delete(cafe);
+    }
 }

@@ -19,9 +19,9 @@ import java.util.Map;
 @RequestMapping("/admin")
 @PreAuthorize("hasAuthority('ADMIN')")
 public class AdminController {
+
     private final MenuService menuService;
     private final DrinkController drinkController;
-
     public AdminController(MenuService menuService, DrinkController drinkController) {
         this.menuService = menuService;
         this.drinkController = drinkController;
