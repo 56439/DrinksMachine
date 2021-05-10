@@ -7,8 +7,8 @@
     <div class="collapse" id="addAddressCollapse">
         <div class="form-group w-50">
             <form method="post">
-                <input type="text" class="form-control mb-1 mt-2" name="address" placeholder="Адрес" />
-                <input type="text" class="form-control mb-1" name="location" placeholder="Координаты" />
+                <input type="text" class="form-control mb-1 mt-2" name="address" placeholder="Адрес" required/>
+                <input type="text" class="form-control mb-1" name="location" placeholder="Координаты" required/>
 
                 <input type="hidden" name="_csrf" value="${_csrf.token}" />
                 <button type="submit" class="btn btn-primary">Добавить</button>

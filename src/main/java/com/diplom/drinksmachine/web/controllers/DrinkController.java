@@ -6,12 +6,16 @@ import com.diplom.drinksmachine.domain.Menu;
 import com.diplom.drinksmachine.domain.Order;
 import com.diplom.drinksmachine.service.MenuService;
 import com.diplom.drinksmachine.service.OrderService;
+import com.diplom.drinksmachine.web.urlRequest.UploadImage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,9 +26,11 @@ public class DrinkController {
 
     private final MenuService menuService;
     private final OrderService orderService;
-    public DrinkController(MenuService menuService, OrderService orderService) {
+    private final UploadImage uploadImage;
+    public DrinkController(MenuService menuService, OrderService orderService, UploadImage uploadImage) {
         this.menuService = menuService;
         this.orderService = orderService;
+        this.uploadImage = uploadImage;
     }
 
     @Value("${default.image}")
@@ -46,22 +52,25 @@ public class DrinkController {
     @PostMapping
     public String drinkSave(
             @RequestParam String title,
-            @RequestParam(required = false, defaultValue = "Описание отсутствует") String description,
-            @RequestParam(required = false, defaultValue = "") String img,
+            @RequestParam String description,
+            @RequestParam("file") MultipartFile file,
             @PathVariable Drink drink,
             @RequestParam Map<String, String> form,
             @RequestParam(required = false) Integer cost_1,
             @RequestParam(required = false) Integer cost_2,
             @RequestParam(required = false) Integer cost_3
-    ) {
+    ) throws Exception {
         if (cost_1 == null && cost_2 == null && cost_3 == null)
             return "redirect:/admin";
 
-        if (img.equals("")) img = defaultImage;
+        if (file != null && !file.getOriginalFilename().isEmpty()) {
+            byte[] img = file.getBytes();
+            String image = uploadImage.writeToStore(img);
+            drink.setImg(image);
+        }
 
         drink.setTitle(title);
         drink.setDescription(description);
-        drink.setImg(img);
         menuService.updateDrink(drink);
 
         List<Menu> menu = menuService.findMenuByDrinkId(drink.getId());
@@ -98,6 +107,7 @@ public class DrinkController {
             Integer cost_3
     ) {
         List<Capacity> capacities = menuService.findAllCapacities();
+        List<Menu> menus = new ArrayList<>();
         for (String key : form.keySet()) {
             for (Capacity capacity : capacities) {
                 Menu menu;
@@ -106,20 +116,33 @@ public class DrinkController {
 
                     switch ("cost_" + key) {
                         case "cost_1":
-                            menu.setCost(cost_1);
+                            if (cost_1 != null) {
+                                menu.setCost(cost_1);
+                                menus.add(menu);
+                            }
                             break;
                         case "cost_2":
-                            menu.setCost(cost_2);
+                            if (cost_2 != null) {
+                                menu.setCost(cost_2);
+                                menus.add(menu);
+                            }
                             break;
                         case "cost_3":
-                            menu.setCost(cost_3);
+                            if (cost_3 != null) {
+                                menu.setCost(cost_3);
+                                menus.add(menu);
+                            }
                             break;
                         default:
                             break;
                     }
-                    menuService.addMenu(menu);
                 }
             }
+        }
+
+        if (menus.size() != 0) {
+            menuService.addDrink(drink);
+            menuService.addMenuList(menus);
         }
     }
 }

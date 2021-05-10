@@ -1,4 +1,4 @@
-package com.diplom.drinksmachine.service;
+package com.diplom.drinksmachine.web.urlRequest;
 
 import com.diplom.drinksmachine.domain.Order;
 import lombok.extern.slf4j.Slf4j;

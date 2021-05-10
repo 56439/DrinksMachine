@@ -7,10 +7,10 @@
     </a>
     <div class="collapse" id="addDrinkCollapse">
         <div class="form-group w-50">
-            <form method="post">
-                <input type="text" class="form-control mb-1 mt-2" name="title" placeholder="Название" />
-                <input type="text" class="form-control mb-1" name="description" placeholder="Описание" />
-                <input type="text" class="form-control mb-1" name="image" placeholder="IMG Link">
+            <form method="post" enctype="multipart/form-data">
+                <input type="text" class="form-control mb-1 mt-2" name="title" placeholder="Название" required/>
+                <input type="text" class="form-control mb-1" name="description" placeholder="Описание" required/>
+                <input type="file" class="form-control-file" name="file">
 
                 <#list capacities as capacity>
                     <div class="form-row align-items-center">

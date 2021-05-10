@@ -8,8 +8,8 @@
     <div class="collapse" id="addStaffCollapse">
         <div class="form-group w-50">
             <form action="/staff" method="post">
-                <input type="text" class="form-control mb-1 mt-2" name="username" placeholder="Логин">
-                <input type="text" class="form-control mb-1" name="password" placeholder="Пароль">
+                <input type="text" class="form-control mb-1 mt-2" name="username" placeholder="Логин" required>
+                <input type="text" class="form-control mb-1" name="password" placeholder="Пароль" required>
 
                 <#list roles as role>
                     <div class="form-row align-items-center">

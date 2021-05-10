@@ -1,6 +1,6 @@
 package com.diplom.drinksmachine.web.controllers;
 
-import com.diplom.drinksmachine.service.OrderReadyMessage;
+import com.diplom.drinksmachine.web.urlRequest.OrderReadyMessage;
 import com.diplom.drinksmachine.domain.Order;
 import com.diplom.drinksmachine.service.OrderService;
 import org.springframework.security.access.prepost.PreAuthorize;

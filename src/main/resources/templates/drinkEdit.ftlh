@@ -3,10 +3,10 @@
 <@c.page>
     <h5>Редактирование напитка</h5>
     <div class="form-group w-50">
-        <form method="post">
-            <input type="text" class="form-control mb-1 mt-2" name="title" value="${drink.title}">
-            <input type="text" class="form-control mb-1" name="description" value="${drink.description}">
-            <input type="text" class="form-control mb-1" name="img" value="${drink.img}">
+        <form method="post" enctype="multipart/form-data">
+            <input type="text" class="form-control mb-1 mt-2" name="title" value="${drink.title}" required>
+            <input type="text" class="form-control mb-1" name="description" value="${drink.description}" required>
+            <input type="file" class="form-control-file" name="file">
 
             <#list capacities as capacity>
                 <div class="form-row align-items-center">

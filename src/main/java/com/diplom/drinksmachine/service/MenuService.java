@@ -70,6 +70,11 @@ public class MenuService {
     }
 
     @Transactional
+    public void addMenuList(List<Menu> menus) {
+        menuRepo.saveAll(menus);
+    }
+
+    @Transactional
     public void deleteMenuList(List<Menu> menu) {
         menuRepo.deleteAll(menu);
     }

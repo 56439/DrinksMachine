@@ -11,7 +11,7 @@
         <#if user??>
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin">Администратор</a>
+                    <a class="nav-link" href="/admin">Напитки</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/staff">Персонал</a>

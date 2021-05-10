@@ -4,8 +4,8 @@
     <h5>Редактирование сотрудника</h5>
     <div class="form-group w-50">
         <form method="post">
-            <input class="form-control mb-1 mt-2" type="text" name="username" value="${staff.username}">
-            <input class="form-control mb-1" type="text" name="password" value="${staff.password}">
+            <input class="form-control mb-1 mt-2" type="text" name="username" value="${staff.username}" required>
+            <input class="form-control mb-1" type="text" name="password" value="${staff.password}" required>
 
             <#list roles as role>
                 <div class="form-row align-items-center">
