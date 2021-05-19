@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Entity
 @Data
-@Table(name = "staff")
+@Table(name = "admin")
 public class Admin implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,7 +25,7 @@ public class Admin implements UserDetails {
     private boolean active;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "staff_role", joinColumns = @JoinColumn(name = "staff_id"))
+    @CollectionTable(name = "admin_role", joinColumns = @JoinColumn(name = "admin_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
