@@ -26,7 +26,7 @@ public class CapacityCurrentDrinkHandler {
         Message message = update.getCallbackQuery().getMessage();
 
         List<List<InlineKeyboardButton>> keyboard = message.getReplyMarkup().getKeyboard();
-        InlineKeyboardButton payButton = keyboard.get(1).get(0);
+        InlineKeyboardButton confirmButton = keyboard.get(1).get(0);
 
         String caption = "";
 
@@ -37,12 +37,12 @@ public class CapacityCurrentDrinkHandler {
 
             if (button.getCallbackData().substring(11).equals(callback)) {
                 button.setText("› " + chosenDrink.getCapacity().getSymbol());
-                payButton.setCallbackData("pay" + callback);
-                payButton.setText("\uD83D\uDCB3 Перейти к оплате (" + chosenDrink.getCost() + " ₽)");
+                confirmButton.setCallbackData("confirm" +  callback);
 
                 caption =
                         "<b>" + user.getCafe().getAddress() + "</b>\n\n" +
-                                "› " + chosenDrink.getDrink().getTitle() + " - " + chosenDrink.getCapacity().getSymbol() +
+                                "› " + chosenDrink.getDrink().getTitle() +
+                                " - " + chosenDrink.getCapacity().getSymbol() +
                                 ": " + chosenDrink.getCost() + " ₽";
 
             } else {

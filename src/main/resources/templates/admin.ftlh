@@ -12,19 +12,21 @@
                 <input type="text" class="form-control mb-1" name="description" placeholder="Описание" required/>
                 <input type="file" class="form-control-file" name="file">
 
-                <#list capacities as capacity>
-                    <div class="form-row align-items-center">
-                        <div class="col-sm-3">
-                            <label>
-                                <input type="checkbox" name="${capacity.id}" checked>
-                                ${capacity.symbol} - ${capacity.value} мл.
-                            </label>
+                <div class="mt-2">
+                    <#list capacities as capacity>
+                        <div class="form-row align-items-center">
+                            <div class="col-sm-3">
+                                <label>
+                                    <input type="checkbox" name="${capacity.id}" checked>
+                                    ${capacity.symbol} - ${capacity.value} мл.
+                                </label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control mb-1" type="number" name="cost_${capacity.id}" placeholder="Стоимость" />
+                            </div>
                         </div>
-                        <div class="col-auto">
-                            <input class="form-control mb-1" type="number" name="cost_${capacity.id}" placeholder="Стоимость" />
-                        </div>
-                    </div>
-                </#list>
+                    </#list>
+                </div>
 
                 <input type="hidden" name="_csrf" value="${_csrf.token}" />
                 <button type="submit" class="btn btn-primary">Добавить</button>
@@ -40,7 +42,9 @@
                    <span><b>${drink.title}</b></span>
                </div>
                <div class="card-footer text-muted">${drink.description}
-                   <a class="btn btn-primary" href="/admin/drink/${drink.id}">Изменить</a>
+               </div>
+               <div>
+                   <a class="btn btn-primary col" href="/admin/drink/${drink.id}">Изменить</a>
                </div>
            </div>
        <#else>

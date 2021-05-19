@@ -5,5 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DrinkRepo extends JpaRepository<Drink, Long> {
     Drink findById(long id);
-    Drink findFirstByOrderByIdDesc();
 }

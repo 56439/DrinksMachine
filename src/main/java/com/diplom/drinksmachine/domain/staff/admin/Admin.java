@@ -1,4 +1,4 @@
-package com.diplom.drinksmachine.domain.staff;
+package com.diplom.drinksmachine.domain.staff.admin;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,10 +11,14 @@ import java.util.Set;
 @Entity
 @Data
 @Table(name = "staff")
-public class Staff implements UserDetails {
+public class Admin implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private  Long id;
+
+    private String firstName;
+    private String secondName;
+    private String thirdName;
 
     private String username;
     private String password;
@@ -25,13 +29,21 @@ public class Staff implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-    public boolean isAdmin() {
-        return roles.contains(Role.ADMIN);
+    public Admin() {}
+
+    public Admin(String firstName,
+                 String secondName,
+                 String thirdName,
+                 String username,
+                 String password
+    ) {
+        this.firstName = firstName;
+        this.secondName = secondName;
+        this.thirdName = thirdName;
+        this.username = username;
+        this.password = password;
+        this.active = true;
     }
-
-    public Staff() {}
-
-    public Staff(String username, String password, boolean active) {}
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -57,6 +69,4 @@ public class Staff implements UserDetails {
     public boolean isEnabled() {
         return isActive();
     }
-
-
 }

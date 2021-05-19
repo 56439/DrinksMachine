@@ -35,11 +35,6 @@ public class MenuService {
     }
 
     @Transactional(readOnly = true)
-    public Drink findLastAddedDrink() {
-        return drinkRepo.findFirstByOrderByIdDesc();
-    }
-
-    @Transactional(readOnly = true)
     public List<Capacity> findAllCapacities() {
         return capacityRepo.findAll();
     }

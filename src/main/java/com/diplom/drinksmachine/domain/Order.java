@@ -2,6 +2,7 @@ package com.diplom.drinksmachine.domain;
 
 import lombok.Data;
 import javax.persistence.*;
+import java.sql.Date;
 
 @Entity
 @Data
@@ -24,10 +25,10 @@ public class Order {
     private User user;
 
     private Boolean ready;
+    private Boolean issued;
+    private Date date;
+
+    private Integer wait;
 
     public Order(){}
-
-    public Order(Boolean ready){
-        this.ready = ready;
-    }
 }

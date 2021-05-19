@@ -16,11 +16,6 @@ public class OrderService {
         this.orderRepo = orderRepo;
     }
 
-    @Transactional
-    public List<Order> findAll() {
-        return orderRepo.findAll();
-    }
-
     @Transactional(readOnly = true)
     public Order findById(long id) {
         return orderRepo.findById(id);
@@ -54,6 +49,7 @@ public class OrderService {
     @Transactional
     public void addOrder(Order order) {
         order.setReady(false);
+        order.setIssued(false);
         orderRepo.save(order);
     }
 

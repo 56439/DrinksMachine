@@ -1,4 +1,4 @@
-package com.diplom.drinksmachine.web.urlRequest;
+package com.diplom.drinksmachine.web.uploadImg;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;

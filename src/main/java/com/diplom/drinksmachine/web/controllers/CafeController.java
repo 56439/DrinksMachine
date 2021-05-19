@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Time;
 import java.util.List;
 
 @Controller
@@ -29,12 +30,19 @@ public class CafeController {
     @PostMapping
     public String addCafe(@RequestParam String address,
                           @RequestParam String location,
+                          @RequestParam String openTime,
+                          @RequestParam String closeTime,
                           Model model
     ) {
         address = "\uD83D\uDCCD " + address;
+        openTime += ":00";
+        closeTime += ":00";
+
         Cafe cafe = new Cafe();
         cafe.setAddress(address);
         cafe.setLocation(location);
+        cafe.setOpenTime(Time.valueOf(openTime));
+        cafe.setCloseTime(Time.valueOf(closeTime));
         cafeService.save(cafe);
 
         List<Cafe> cafes = cafeService.findAllCafe();
@@ -52,10 +60,21 @@ public class CafeController {
     @PostMapping("{cafe}")
     public String cafeEdit(@RequestParam String address,
                            @RequestParam String location,
+                           @RequestParam String openTime,
+                           @RequestParam String closeTime,
                            @PathVariable Cafe cafe
     ) {
+        if (openTime.split(":").length < 3) {
+            openTime += ":00";
+        }
+        if (closeTime.split(":").length < 3) {
+            closeTime += ":00";
+        }
+
         cafe.setAddress(address);
         cafe.setLocation(location);
+        cafe.setOpenTime(Time.valueOf(openTime));
+        cafe.setCloseTime(Time.valueOf(closeTime));
         cafeService.save(cafe);
         return "redirect:/cafe";
     }

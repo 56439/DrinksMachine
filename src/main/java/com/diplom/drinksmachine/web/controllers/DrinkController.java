@@ -6,15 +6,13 @@ import com.diplom.drinksmachine.domain.Menu;
 import com.diplom.drinksmachine.domain.Order;
 import com.diplom.drinksmachine.service.MenuService;
 import com.diplom.drinksmachine.service.OrderService;
-import com.diplom.drinksmachine.web.urlRequest.UploadImage;
-import org.springframework.beans.factory.annotation.Value;
+import com.diplom.drinksmachine.web.uploadImg.UploadImage;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +30,6 @@ public class DrinkController {
         this.orderService = orderService;
         this.uploadImage = uploadImage;
     }
-
-    @Value("${default.image}")
-    private String defaultImage;
 
     @GetMapping
     public String drinkEditForm(@PathVariable Drink drink, Model model) {

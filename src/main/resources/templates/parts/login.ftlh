@@ -3,14 +3,13 @@
         <div class="form-group">
             <label class="col-sm-2 col-form-label">Логин</label>
             <div class="col-sm-6">
-                <input type="text" name="username" class="form-control" placeholder="Введите логин"/>
+                <input type="text" name="username" class="form-control" placeholder="Введите логин" required/>
             </div>
-
         </div>
         <div class="form-group">
             <label class="col-sm-2 col-form-label">Пароль</label>
             <div class="col-sm-6">
-                <input type="password" name="password" class="form-control" placeholder="Введите пароль"/>
+                <input type="password" name="password" class="form-control" placeholder="Введите пароль" required/>
             </div>
         </div>
         <div class="form-group">

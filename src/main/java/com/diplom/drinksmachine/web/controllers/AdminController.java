@@ -3,7 +3,7 @@ package com.diplom.drinksmachine.web.controllers;
 import com.diplom.drinksmachine.domain.Capacity;
 import com.diplom.drinksmachine.domain.Drink;
 import com.diplom.drinksmachine.service.MenuService;
-import com.diplom.drinksmachine.web.urlRequest.UploadImage;
+import com.diplom.drinksmachine.web.uploadImg.UploadImage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;

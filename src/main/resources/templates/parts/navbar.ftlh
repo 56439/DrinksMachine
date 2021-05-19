@@ -2,7 +2,7 @@
 <#import "login.ftlh" as l>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="/">DrinksMachine</a>
+    <a class="navbar-brand" href="/admin">DrinksMachine</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -19,9 +19,8 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/cafe">Кофейни</a>
                 </li>
-
                 <li class="nav-item">
-                    <a class="nav-link" href="/barista">Бариста</a>
+                    <a class="nav-link" href="/shift">Смены</a>
                 </li>
             </ul>
             <div class="navbar-text mr-3">${name}</div>

@@ -17,6 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.io.Serializable;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,17 +127,26 @@ public class InputMessageHandler {
         Cafe cafe = cafeService.findByAddress(messageText);
 
         if (cafe != null) {
+            LocalTime currentTime = LocalTime.now();
+            LocalTime openTime = cafe.getOpenTime().toLocalTime();
+            LocalTime closeTime = cafe.getCloseTime().toLocalTime();
+
+            if (currentTime.isBefore(openTime) || currentTime.isAfter(closeTime)) {
+                String text = "Кофейня закрыта. \uD83D\uDE34\n<b>Открытие в " + openTime + "</b>";
+                return replyMessage(user, text, cafeListKeyboard());
+            }
+
             user.setCafe(cafe);
             userService.updateUser(user);
 
             return getSendLocation(user, message);
         }
-
         return null;
     }
 
     private SendMessage replyMessage(User user, String text, ReplyKeyboardMarkup replyKeyboardMarkup) {
         return new SendMessage()
+                .setParseMode("HTML")
                 .setText(text)
                 .setChatId(user.getChatId())
                 .setReplyMarkup(replyKeyboardMarkup);

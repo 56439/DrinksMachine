@@ -72,6 +72,10 @@ public class Bot extends TelegramLongPollingBot {
             if (update.getCallbackQuery().getData().startsWith("pay")) {
                 sendAnswer(callbackQueryHandler.deleteMessage(update, user));
             }
+            if (update.getCallbackQuery().getData().startsWith("wait")) {
+                String callback = update.getCallbackQuery().getData();
+                sendAnswer(callbackQueryHandler.timeInfo(update, callback));
+            }
             sendAnswer(callbackQueryHandler.handler(update, user));
             return;
         }
@@ -88,8 +92,8 @@ public class Bot extends TelegramLongPollingBot {
 
         if (update.hasMessage()) {
             if (update.getMessage().hasSuccessfulPayment()) {
-                String menuId = update.getMessage().getSuccessfulPayment().getInvoicePayload();
-                orderHandler.addOrder(menuId, user);
+                String payload = update.getMessage().getSuccessfulPayment().getInvoicePayload();
+                orderHandler.addOrder(payload, user);
 
                 log.info("Новый заказ от пользователя: {}, chatID: {}, menuId: {}",
                         update.getMessage().getFrom().getUserName(),

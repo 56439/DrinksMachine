@@ -5,8 +5,6 @@ import com.diplom.drinksmachine.repo.UserRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 public class UserService {
 
@@ -17,18 +15,8 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public User findByChatId(long id) {
-        return userRepo.findByChatId(id);
-    }
-
-    @Transactional(readOnly = true)
     public User findByUserName(String name) {
         return userRepo.findByName(name);
-    }
-
-    @Transactional(readOnly = true)
-    public List<User> findAllUsers() {
-        return userRepo.findAll();
     }
 
     @Transactional
