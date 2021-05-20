@@ -96,7 +96,6 @@
 
     <script>
         changeAddress = (role) => {
-            console.log("hui");
             let address = document.getElementById('addressCafe');
             address.hidden = role === 'admin';
         }

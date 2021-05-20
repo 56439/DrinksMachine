@@ -10,7 +10,7 @@
         <div class="form-group w-50">
             <form action="/shift" method="post" class="row no-gutters">
                 <div class="col-12">
-                    <input class="form-control mb-2 mt-2" type="date" id="start" name="date"
+                    <input class="form-control mb-2 mt-2" type="date" name="date" id="date"
                            value="2021-05-17" min="2021-01-01">
                 </div>
                 <div class="col-12">
@@ -50,4 +50,9 @@
             </#list>
         </ul>
     </div>
+
+    <script>
+        let dateInput = document.getElementById('date');
+        dateInput.valueAsDate = new Date();
+    </script>
 </@c.page>
