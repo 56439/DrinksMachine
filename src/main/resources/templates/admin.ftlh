@@ -10,7 +10,7 @@
             <form method="post" enctype="multipart/form-data">
                 <input type="text" class="form-control mb-1 mt-2" name="title" placeholder="Название" required/>
                 <input type="text" class="form-control mb-1" name="description" placeholder="Описание" required/>
-                <input type="file" class="form-control-file" name="file">
+                <input type="file" class="form-control-file" name="file" required>
 
                 <div class="mt-2">
                     <#list capacities as capacity>
